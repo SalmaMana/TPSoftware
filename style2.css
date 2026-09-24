@@ -1,0 +1,21 @@
+body{
+    background-color:white;
+    font-family:Georgia;
+    text-align: center;
+
+}
+h2{
+    color:pink;
+    font-family:Arial, Helvetica, sans-serif;
+}
+.button{
+    display: block;
+    width: 350px;
+    margin: 15px auto;
+    padding: 15px;
+    background-color:lightpink;
+    color: #161616;
+    text-decoration: none;
+    border-radius: 8px; 
+
+}

@@ -8,4 +8,6 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     boolean existsByEmail(String email);
     // Checks whether a student with this university ID already exists.
     boolean existsByUniversityId(String universityId);
+    // Retrieve a student using their email
+    Student findByEmail(String email);
 }

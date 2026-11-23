@@ -1,44 +1,40 @@
+
 package ma.um6p.compusconnect;
 
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 /*
  * Controller responsible for handling HTTP requests
  * related to posts on CompusConnect.
  *
- * It receives requests from the frontend, delegates the
- * business logic to PostService, and returns responses.
+ * It receives requests from the frontend,
+ * delegates business logic to PostService,
+ * and returns the results.
  */
 @RestController
 @RequestMapping("/api/posts")
 public class PostController {
 
-    /*
-     * Service responsible for processing post operations.
-     */
+    // Service responsible for post operations.
     private final PostService postService;
 
     /*
      * Constructor injection.
-     *
-     * Spring provides the PostService instance automatically.
+     * Spring automatically provides PostService.
      */
     public PostController(PostService postService) {
         this.postService = postService;
     }
 
     /*
-     * Endpoint used to create a new post.
+     * Creates a new post for the authenticated student.
      *
      * POST /api/posts
-     *
-     * @Valid triggers validation of the request DTO.
-     * Authentication provides the identity of the
-     * currently authenticated user.
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -46,62 +42,60 @@ public class PostController {
             @Valid @RequestBody CreatePostRequest request,
             Authentication authentication) {
 
-        /*
-         * Retrieve the email of the authenticated user.
-         *
-         * In our existing JWT configuration, authentication.getName()
-         * represents the authenticated user's email.
-         */
+        // Identify the currently authenticated student.
         String authenticatedEmail = authentication.getName();
-        /*
-         * Delegate the creation logic to the service.
-         *
-         * The service creates and saves the post.
-         * We then convert the saved entity into a response DTO.
-         */
+
+        // Create and save the post.
         Post createdPost = postService.createPost(
                 request, authenticatedEmail);
 
+        // Return the post information to the frontend.
         return new PostResponse(createdPost);
     }
+
     /*
-     * GET endpoint that retrieves all posts published on CompusConnect.
-     * URL: GET /api/posts
+     * Retrieves all posts, ordered from newest to oldest.
+     *
+     * GET /api/posts
      */
     @GetMapping
     public List<PostResponse> getAllPosts() {
-        // Ask the Service to retrieve and convert all posts.
         return postService.getAllPosts();
     }
 
     /*
-     * GET endpoint that retrieves one post using its ID.
-     * Example URL: GET /api/posts/5
+     * Retrieves one post by its ID.
+     *
+     * GET /api/posts/5
      */
     @GetMapping("/{id}")
     public PostResponse getPostById(@PathVariable Long id) {
-        // Ask the Service to retrieve the post with the requested ID.
         return postService.getPostById(id);
     }
+
     /*
-     * PUT endpoint that updates an existing post.
-     * URL: PUT /api/posts/{id}
+     * Updates a post.
+     * Only the author is allowed to update it.
+     *
+     * PUT /api/posts/5
      */
     @PutMapping("/{id}")
     public PostResponse updatePost(
             @PathVariable Long id,
             @Valid @RequestBody UpdatePostRequest request,
             Authentication authentication) {
-        // Get the email of the currently authenticated student.
+
         String authenticatedEmail = authentication.getName();
-        // Ask the Service to update the post.
-        // The Service also verifies that the student owns it.
-        return postService.updatePost(id, request, authenticatedEmail);
+
+        return postService.updatePost(
+                id, request, authenticatedEmail);
     }
 
     /*
-     * DELETE endpoint that removes an existing post.
-     * URL: DELETE /api/posts/{id}
+     * Deletes a post.
+     * Only the author is allowed to delete it.
+     *
+     * DELETE /api/posts/5
      */
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -109,30 +103,27 @@ public class PostController {
             @PathVariable Long id,
             Authentication authentication) {
 
-        // Get the email of the currently authenticated student.
         String authenticatedEmail = authentication.getName();
 
-        // Ask the Service to delete the post.
-        // The Service verifies that the student owns it.
         postService.deletePost(id, authenticatedEmail);
     }
+
     /*
-     * Retrieves posts filtered by their type.
+     * Existing endpoint: filters posts by type.
      *
-     * Example:
      * GET /api/posts/filter?type=NEED
      * GET /api/posts/filter?type=HAVE
      */
     @GetMapping("/filter")
     public List<PostResponse> getPostsByType(
             @RequestParam PostType type) {
+
         return postService.getPostsByType(type);
     }
 
     /*
-     * Searches posts by a keyword in their title or description.
+     * Existing endpoint: searches posts by keyword.
      *
-     * Example:
      * GET /api/posts/search?keyword=Java
      */
     @GetMapping("/search")
@@ -142,7 +133,33 @@ public class PostController {
         return postService.searchPosts(keyword);
     }
 
+    /*
+     * NEW: Combined filtering endpoint.
+     *
+     * Students can filter posts by:
+     * - Type: NEED or HAVE
+     * - Category: Programming, Mathematics, etc.
+     * - Keyword: searched in title or description
+     *
+     * All three parameters are optional.
+     *
+     * Examples:
+     *
+     * GET /api/posts/search-filters?category=Programming
+     *
+     * GET /api/posts/search-filters?type=HAVE
+     *
+     * GET /api/posts/search-filters?keyword=Java
+     *
+     * GET /api/posts/search-filters?type=HAVE&category=Programming&keyword=Java
+     */
+    @GetMapping("/search-filters")
+    public List<PostResponse> searchWithFilters(
+            @RequestParam(required = false) PostType type,
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String keyword) {
 
+        return postService.searchWithFilters(
+                type, category, keyword);
+    }
 }
-
-

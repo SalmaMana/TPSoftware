@@ -1,23 +1,40 @@
 
 package ma.um6p.compusconnect;
-// Used to validate the fields received in the update request.
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 /*
- * DTO containing the information needed to update an existing post.
+ * DTO containing the information needed
+ * to update an existing post.
+ *
+ * A student can update:
+ * - Title
+ * - Description
+ * - Post type (NEED or HAVE)
+ * - Category
  */
 public class UpdatePostRequest {
+
     // New title of the post.
-    @NotBlank
+    @NotBlank(message = "Title is required")
     private String title;
+
     // New description of the post.
-    @NotBlank
+    @NotBlank(message = "Description is required")
     private String description;
-    // New type: NEED or HAVE.
-    @NotNull
+
+    // New post type: NEED or HAVE.
+    @NotNull(message = "Post type is required")
     private PostType postType;
-    // Getters and setters allow the Service to access the fields.
+
+    // NEW: Category of the post.
+    @NotBlank(message = "Category is required")
+    private String category;
+
+    // =========================
+    // GETTERS AND SETTERS
+    // =========================
 
     public String getTitle() {
         return title;
@@ -42,5 +59,14 @@ public class UpdatePostRequest {
     public void setPostType(PostType postType) {
         this.postType = postType;
     }
-}
 
+    // Returns the category received from the frontend.
+    public String getCategory() {
+        return category;
+    }
+
+    // Allows Spring to populate the category field.
+    public void setCategory(String category) {
+        this.category = category;
+    }
+}

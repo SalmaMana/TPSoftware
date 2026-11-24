@@ -54,9 +54,10 @@ public class SecurityConfig {
                                 jakarta.servlet.DispatcherType.ERROR
                         ).permitAll()
 
-                        .requestMatchers("/api/auth/**").permitAll()
-
-                        .anyRequest().authenticated()
+                                .requestMatchers("/api/auth/**").permitAll()
+                               // Allow reading campus information without a JWT token
+                                .requestMatchers("/api/campus-info/**").permitAll()
+                                .anyRequest().authenticated()
                 )
 
                 // Add JWT filter before the username/password filter

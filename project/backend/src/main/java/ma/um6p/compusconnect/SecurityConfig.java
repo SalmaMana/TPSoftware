@@ -1,7 +1,11 @@
 package ma.um6p.compusconnect;
 
+import jakarta.servlet.DispatcherType;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import org.springframework.http.HttpMethod;
 
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
@@ -16,13 +20,18 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 public class SecurityConfig {
 
     private final JwtService jwtService;
+    private final StudentRepository studentRepository;
 
     // Constructor injection
-    public SecurityConfig(JwtService jwtService) {
+    public SecurityConfig(
+            JwtService jwtService,
+            StudentRepository studentRepository) {
+
         this.jwtService = jwtService;
+        this.studentRepository = studentRepository;
     }
 
-    // BCrypt password encoder bean
+    // Password encryption
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -33,34 +42,56 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http)
             throws Exception {
 
-        // Create our JWT filter
+        // Create the JWT authentication filter
         JwtAuthenticationFilter jwtAuthenticationFilter =
-                new JwtAuthenticationFilter(jwtService);
+                new JwtAuthenticationFilter(
+                        jwtService,
+                        studentRepository
+                );
 
         http
-                // Disable CSRF for our REST API (initial API configuration)
+
+                // Disable CSRF for the REST API
                 .csrf(csrf -> csrf.disable())
 
-                // We don't use server-side sessions for JWT authentication
+                // Use JWT instead of server-side sessions
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(
                                 SessionCreationPolicy.STATELESS
                         )
                 )
 
-                // Define which requests are accessible
+                // Configure endpoint permissions
                 .authorizeHttpRequests(auth -> auth
+
+                        // Allow error dispatches
                         .dispatcherTypeMatchers(
-                                jakarta.servlet.DispatcherType.ERROR
+                                DispatcherType.ERROR
                         ).permitAll()
 
-                                .requestMatchers("/api/auth/**").permitAll()
-                               // Allow reading campus information without a JWT token
-                                .requestMatchers("/api/campus-info/**").permitAll()
-                                .anyRequest().authenticated()
+                        // Registration and login are public
+                        .requestMatchers("/api/auth/**")
+                        .permitAll()
+
+                        // Only administrators can access admin endpoints
+                        .requestMatchers("/api/admin/**")
+                        .hasRole("ADMIN")
+
+                        // Everyone can read campus information
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/api/campus-info/**"
+                        ).permitAll()
+
+                        // Only administrators can modify campus information
+                        .requestMatchers("/api/campus-info/**")
+                        .hasRole("ADMIN")
+
+                        // All other endpoints require authentication
+                        .anyRequest().authenticated()
                 )
 
-                // Add JWT filter before the username/password filter
+                // Execute the JWT filter before the authentication filter
                 .addFilterBefore(
                         jwtAuthenticationFilter,
                         UsernamePasswordAuthenticationFilter.class

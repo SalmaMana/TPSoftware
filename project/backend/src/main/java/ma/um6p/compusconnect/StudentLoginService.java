@@ -12,7 +12,7 @@ public class StudentLoginService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
-    // Constructor injection: Spring provides these three services automatically
+    // Constructor injection
     public StudentLoginService(
             StudentRepository studentRepository,
             PasswordEncoder passwordEncoder,
@@ -25,24 +25,27 @@ public class StudentLoginService {
 
     public StudentLoginResponse login(StudentLoginRequest request) {
 
-        // 1. Find the student using the email provided in the login request
-        Student student = studentRepository.findByEmail(request.getEmail());
+        // Find the student using their email
+        Student student = studentRepository.findByEmail(
+                request.getEmail()
+        );
 
-        // 2. If the email doesn't exist, reject the login
-        if (student == null) {
+        // Reject login if the account does not exist
+        // or if the account is suspended
+        if (student == null || student.isSuspended()) {
             throw new ResponseStatusException(
                     HttpStatus.UNAUTHORIZED,
                     "Invalid email or password"
             );
         }
 
-        // 3. Compare the entered password with the stored BCrypt hash
+        // Verify the password
         boolean passwordMatches = passwordEncoder.matches(
                 request.getPassword(),
                 student.getPasswordHash()
         );
 
-        // 4. If the password is incorrect, reject the login
+        // Reject incorrect passwords
         if (!passwordMatches) {
             throw new ResponseStatusException(
                     HttpStatus.UNAUTHORIZED,
@@ -50,10 +53,12 @@ public class StudentLoginService {
             );
         }
 
-        // 5. Generate a real JWT token after successful authentication
-        String token = jwtService.generateToken(student.getEmail());
+        // Generate the JWT token
+        String token = jwtService.generateToken(
+                student.getEmail()
+        );
 
-        // 6. Return the token and student information
+        // Return the token and student information
         return new StudentLoginResponse(
                 token,
                 student.getUserId(),

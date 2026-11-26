@@ -530,3 +530,373 @@
     font-size: 22px;
   }
 }
+
+/* Campus information loading state */
+.campus-status {
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  gap: 16px;
+}
+
+.campus-status h2 {
+  margin-bottom: 0;
+}
+
+.campus-status p {
+  color: #64748b;
+}
+
+.loading-spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid #e2e8f0;
+  border-top: 4px solid #2563eb;
+  border-radius: 50%;
+  animation: campusSpin 0.8s linear infinite;
+}
+
+@keyframes campusSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Campus information error state */
+.error-icon {
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 28px;
+  font-weight: bold;
+  color: #dc2626;
+  background-color: #fee2e2;
+}
+
+.retry-button {
+  padding: 12px 24px;
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.retry-button:hover {
+  background-color: #1d4ed8;
+  transform: translateY(-2px);
+}
+
+.retry-button:focus-visible {
+  outline: 3px solid #93c5fd;
+  outline-offset: 3px;
+}
+
+/* Campus information empty state */
+.empty-state {
+  width: 100%;
+  padding: 55px 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 16px;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+}
+
+.empty-state-icon {
+  font-size: 42px;
+  color: #64748b;
+}
+
+.empty-state h3 {
+  color: #1e293b;
+  font-size: 22px;
+}
+
+.empty-state p {
+  max-width: 480px;
+  color: #64748b;
+  line-height: 1.7;
+}
+
+.empty-state-button {
+  padding: 11px 22px;
+  border: none;
+  border-radius: 10px;
+  background-color: #2563eb;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.empty-state-button:hover {
+  background-color: #1d4ed8;
+}
+
+.empty-state-button:focus-visible {
+  outline: 3px solid #93c5fd;
+  outline-offset: 3px;
+}
+/* Navbar brand and accessibility */
+.navbar-brand {
+  text-decoration: none;
+  color: inherit;
+}
+
+.navbar-brand h2 {
+  transition: color 0.2s ease;
+}
+
+.navbar-brand:hover h2 {
+  color: #2563eb;
+}
+
+.navbar nav a:focus-visible,
+.navbar-brand:focus-visible {
+  outline: 3px solid #93c5fd;
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+/* Skip-to-content accessibility link */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 20px;
+  z-index: 10000;
+  padding: 12px 18px;
+  background-color: #2563eb;
+  color: white;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.skip-link:focus {
+  top: 15px;
+}
+/* Hero section navigation button */
+.hero-button {
+  display: inline-block;
+  margin-top: 25px;
+  padding: 14px 28px;
+  background-color: #2563eb;
+  color: white;
+  text-decoration: none;
+  border-radius: 10px;
+  font-weight: bold;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.hero-button:hover {
+  background-color: #1d4ed8;
+  transform: translateY(-3px);
+}
+
+.hero-button:focus-visible {
+  outline: 3px solid #93c5fd;
+  outline-offset: 4px;
+}
+/* Hero section improvements */
+.hero {
+  padding: 110px 20px;
+}
+
+.hero-label {
+  display: inline-block;
+  margin-bottom: 22px;
+  padding: 8px 16px;
+  background-color: #dbeafe;
+  color: #1d4ed8;
+  border-radius: 30px;
+  font-size: 13px;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.hero h1 {
+  font-size: clamp(38px, 6vw, 64px);
+  line-height: 1.15;
+  margin-bottom: 24px;
+}
+
+.hero p {
+  max-width: 620px;
+  margin: 0 auto;
+  line-height: 1.8;
+}
+
+.hero-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-top: 30px;
+}
+
+.hero-button {
+  margin-top: 0;
+}
+
+.hero-secondary-button {
+  display: inline-block;
+  padding: 14px 28px;
+  border: 2px solid #2563eb;
+  border-radius: 10px;
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.hero-secondary-button:hover {
+  background-color: #2563eb;
+  color: white;
+}
+
+.hero-secondary-button:focus-visible {
+  outline: 3px solid #93c5fd;
+  outline-offset: 4px;
+}
+
+@media (max-width: 600px) {
+  .hero {
+    padding: 80px 20px;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+  }
+
+  .hero-actions a {
+    width: 100%;
+    max-width: 260px;
+    text-align: center;
+  }
+}
+/* Platform highlights section */
+.highlights-section {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 25px;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 55px 25px;
+}
+
+.highlight-item {
+  padding: 30px 24px;
+  text-align: center;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.highlight-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+}
+
+.highlight-icon {
+  display: block;
+  margin-bottom: 16px;
+  font-size: 34px;
+}
+
+.highlight-item h3 {
+  margin-bottom: 12px;
+  color: #1e293b;
+  font-size: 19px;
+}
+
+.highlight-item p {
+  color: #64748b;
+  line-height: 1.7;
+  font-size: 14px;
+}
+
+@media (max-width: 750px) {
+  .highlights-section {
+    grid-template-columns: 1fr;
+    max-width: 500px;
+  }
+}
+/* About section improvements */
+.about-section {
+  padding: 85px 25px;
+  text-align: center;
+}
+
+.about-label {
+  display: inline-block;
+  margin-bottom: 15px;
+  color: #2563eb;
+  font-size: 13px;
+  font-weight: bold;
+  letter-spacing: 1.5px;
+}
+
+.about-section h2 {
+  margin-bottom: 20px;
+  font-size: clamp(28px, 4vw, 40px);
+  color: #1e293b;
+}
+
+.about-intro {
+  max-width: 720px;
+  margin: 0 auto;
+  color: #64748b;
+  line-height: 1.8;
+}
+
+.about-values {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 25px;
+  max-width: 1100px;
+  margin: 45px auto 0;
+}
+
+.about-value {
+  padding: 30px 24px;
+  background-color: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+}
+
+.about-value span {
+  display: block;
+  margin-bottom: 15px;
+  font-size: 34px;
+}
+
+.about-value h3 {
+  margin-bottom: 12px;
+  color: #1e293b;
+}
+
+.about-value p {
+  color: #64748b;
+  line-height: 1.7;
+}
+
+@media (max-width: 750px) {
+  .about-values {
+    grid-template-columns: 1fr;
+    max-width: 500px;
+  }
+}

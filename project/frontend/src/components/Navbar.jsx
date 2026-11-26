@@ -1,10 +1,15 @@
-
 function Navbar() {
   return (
     <header className="navbar">
-      <h2>CompusConnect</h2>
+      <a href="#main-content" className="skip-link">
+        Skip to content
+      </a>
 
-      <nav>
+      <a href="#home" className="navbar-brand" aria-label="CompusConnect home">
+        <h2>CompusConnect</h2>
+      </a>
+
+      <nav aria-label="Main navigation">
         <a href="#home">Home</a>
         <a href="#campus">Campus</a>
         <a href="#about">About</a>

@@ -11,7 +11,6 @@ function CampusInfo() {
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedItem, setSelectedItem] = useState(null)
 
-  // Load favorites from localStorage when the component initializes
   const [favorites, setFavorites] = useState(() => {
     try {
       const savedFavorites = localStorage.getItem('campusFavorites')
@@ -58,28 +57,28 @@ function CampusInfo() {
     )
   }
 
-  // Save favorites whenever the favorites state changes
   useEffect(() => {
     localStorage.setItem('campusFavorites', JSON.stringify(favorites))
   }, [favorites])
 
-  // Fetch campus information
-  useEffect(() => {
-    async function loadCampusInfo() {
-      try {
-        const data = await getAllCampusInfo()
-        setCampusItems(data)
-      } catch (err) {
-        setError(err.message)
-      } finally {
-        setLoading(false)
-      }
-    }
+  async function loadCampusInfo() {
+    setLoading(true)
+    setError(null)
 
+    try {
+      const data = await getAllCampusInfo()
+      setCampusItems(data)
+    } catch {
+      setError('We could not load campus information. Please try again.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
     loadCampusInfo()
   }, [])
 
-  // Close the modal with the Escape key
   useEffect(() => {
     if (!selectedItem) return
 
@@ -96,7 +95,6 @@ function CampusInfo() {
     }
   }, [selectedItem])
 
-  // Prevent background scrolling while the modal is open
   useEffect(() => {
     if (!selectedItem) return
 
@@ -109,11 +107,26 @@ function CampusInfo() {
   }, [selectedItem])
 
   if (loading) {
-    return <p>Loading campus information...</p>
+    return (
+      <section className="campus-section campus-status">
+        <div className="loading-spinner"></div>
+        <h2>Discovering your campus...</h2>
+        <p>We're gathering campus services and resources for you.</p>
+      </section>
+    )
   }
 
   if (error) {
-    return <p>Error: {error}</p>
+    return (
+      <section className="campus-section campus-status">
+        <div className="error-icon">!</div>
+        <h2>Something went wrong</h2>
+        <p>{error}</p>
+        <button className="retry-button" onClick={loadCampusInfo}>
+          Try Again
+        </button>
+      </section>
+    )
   }
 
   return (
@@ -160,7 +173,6 @@ function CampusInfo() {
         ))}
       </div>
 
-      {/* Favorites filter */}
       <div className="favorites-filter">
         <button
           className={showFavoritesOnly ? 'favorites-active' : ''}
@@ -206,14 +218,38 @@ function CampusInfo() {
           ))}
         </div>
       ) : (
-        <p className="no-results">
-          {showFavoritesOnly
-            ? 'You have no matching favorite campus items.'
-            : 'No campus information matches your search.'}
-        </p>
+        <div className="empty-state">
+          <div className="empty-state-icon">⌕</div>
+
+          <h3>
+            {showFavoritesOnly && favorites.length === 0
+              ? 'No favorites yet'
+              : showFavoritesOnly
+                ? 'No matching favorites'
+                : 'No results found'}
+          </h3>
+
+          <p>
+            {showFavoritesOnly && favorites.length === 0
+              ? 'Save campus facilities you like by clicking the favorite button on a card.'
+              : showFavoritesOnly
+                ? 'Your saved favorites do not match your current search or category. Try changing your filters.'
+                : 'We could not find any campus facilities matching your search. Try a different keyword or category.'}
+          </p>
+
+          <button
+            className="empty-state-button"
+            onClick={() => {
+              setSearchTerm('')
+              setSelectedCategory('ALL')
+              setShowFavoritesOnly(false)
+            }}
+          >
+            Reset filters
+          </button>
+        </div>
       )}
 
-      {/* Campus information modal */}
       {selectedItem && (
         <div
           className="modal-overlay"
